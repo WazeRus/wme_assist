@@ -9,7 +9,7 @@
 // @match     https://world.waze.com/beta_editor/*
 // @match     https://www.waze.com/map-editor/*
 // @require   https://github.com/WazeRus/wme_assist/raw/Griev0us/scaner.js
-// @require   https://greasyfork.org/scripts/18135-wme-assist-analyzer/code/WME_Assist_Analyzer.js?version=114406
+// @require   https://github.com/WazeRus/wme_assist/raw/Griev0us/analyzer.js
 // @grant     none
 // @include   https://editor-beta.waze.com/*
 // @include   https://*.waze.com/editor/editor/*
