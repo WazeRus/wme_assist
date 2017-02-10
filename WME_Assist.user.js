@@ -14,7 +14,7 @@
 // @include   https://editor-beta.waze.com/*
 // @include   https://*.waze.com/editor/editor/*
 // @include   https://*.waze.com/*/editor/*
-// @version   0.5.2
+// @version   0.5.3
 // @namespace https://greasyfork.org/users/20609
 // ==/UserScript==
 
@@ -50,7 +50,7 @@ WME_Assist.series = function (array, start, action, alldone) {
 }
 
 function run_wme_assist() {
-    var ver = '0.5.2';
+    var ver = '0.5.3';
 
     var debug = WME_Assist.debug;
     var info = WME_Assist.info;
@@ -754,7 +754,7 @@ function run_wme_assist() {
         this.renameCity = function (oldname, newname) {
             var oldcity = wazeapi.model.cities.getByAttributes({name: oldname});
 
-            if (oldcity.length == 0) {
+            if (oldcity.length === 0) {
                 console.log('City not found: ' + oldname);
                 return false;
             }
@@ -1392,7 +1392,7 @@ function run_wme_assist() {
 
         // Does not get jQuery.ui
         // Relies on WME Toolbox plugin
-        if (wazeapi == null || !jQuery.ui) {
+        if (wazeapi === null || !jQuery.ui) {
             console.log("WME ASSIST: waiting for Waze");
             setTimeout(function () {
                 waitForWaze(done);
