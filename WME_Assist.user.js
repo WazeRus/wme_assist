@@ -14,7 +14,7 @@
 // @include   https://editor-beta.waze.com/*
 // @include   https://*.waze.com/editor/editor/*
 // @include   https://*.waze.com/*/editor/*
-// @version   0.5.4
+// @version   0.5.5
 // @namespace https://greasyfork.org/users/20609
 // ==/UserScript==
 
@@ -50,7 +50,7 @@ WME_Assist.series = function (array, start, action, alldone) {
 }
 
 function run_wme_assist() {
-    var ver = '0.5.4';
+    var ver = '0.5.5';
 
     var debug = WME_Assist.debug;
     var info = WME_Assist.info;
@@ -105,8 +105,8 @@ function run_wme_assist() {
                 new Rule('No space after the word', function (text) {
                     return text.replace(/\.(?!\s)/g, '. ');
                 }),
-                new Rule('Garbage dot', function (text) {
-                    return text.replace(/(^|\s+)\./g, '$1');
+                new Rule('Мусорный знак препинания после пробела', function (text) {
+                    return text.replace(/(^|\s+)\.|,|;/g, '$1');
                 }),
                 new Rule('Incorrect street name', function (text) {
                     return text.replace(/улицаица/, 'улица');
