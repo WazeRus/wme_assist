@@ -106,7 +106,7 @@ function run_wme_assist() {
                     return text.replace(/\.(?!\s)/g, '. ');
                 }),
                 new Rule('Мусорный знак препинания после пробела', function (text) {
-                    return text.replace(/(^|\s+)\.|,|;/g, '$1');
+                    return text.replace(/(^|\s+)(\.|,|;)/g, '$1');
                 }),
                 new Rule('Incorrect street name', function (text) {
                     return text.replace(/улицаица/, 'улица');
