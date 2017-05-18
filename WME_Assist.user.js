@@ -14,7 +14,7 @@
 // @include   https://editor-beta.waze.com/*
 // @include   https://*.waze.com/editor/editor/*
 // @include   https://*.waze.com/*/editor/*
-// @version   0.5.6
+// @version   0.5.7
 // @namespace https://greasyfork.org/users/20609
 // ==/UserScript==
 
@@ -50,7 +50,7 @@ WME_Assist.series = function (array, start, action, alldone) {
 }
 
 function run_wme_assist() {
-    var ver = '0.5.6';
+    var ver = '0.5.7';
 
     var debug = WME_Assist.debug;
     var info = WME_Assist.info;
