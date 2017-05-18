@@ -535,10 +535,10 @@ function run_wme_assist() {
                     return text.replace(/[\s]+/g, ' ');
                 }),
                 new Rule('Пробелы в начале улицы или после открывающей скобки', function (text) {
-                    return text.replace(/(^|\()[\s]*/, '');
+                    return text.replace(/(^|\()[\s]+/, '$1');
                 }),
                 new Rule('Пробелы в конце улицы или перед закрывающей скобкой', function (text) {
-                    return text.replace(/[\s]*(\)|$)/, '');
+                    return text.replace(/[\s]+(\)|$)/, '$1');
                 }),
             ];
             var countryRules;
