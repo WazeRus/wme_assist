@@ -531,14 +531,14 @@ function run_wme_assist() {
             var commonRules = [
                 // Following rules must be at the end because
                 // previous rules might insert additional spaces
-                new Rule('Redundant space in street name', function (text) {
-                    return text.replace(/[ ]+/g, ' ');
+                new Rule('Лишние пробелы', function (text) {
+                    return text.replace(/[\s]+/g, ' ');
                 }),
-                new Rule('Space at the begin of street name', function (text) {
-                    return text.replace(/^[ ]*/, '');
+                new Rule('Пробелы в начале улицы или после открывающей скобки', function (text) {
+                    return text.replace(/(^|\()[\s]*/, '');
                 }),
-                new Rule('Space at the end of street name', function (text) {
-                    return text.replace(/[ ]*$/, '');
+                new Rule('Пробелы в конце улицы или перед закрывающей скобкой', function (text) {
+                    return text.replace(/[\s]*(\)|$)/, '');
                 }),
             ];
             var countryRules;
