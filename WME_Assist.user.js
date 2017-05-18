@@ -221,7 +221,7 @@ function run_wme_assist() {
                     return text.replace(/\[([^P]+)\]/, '$1');
                 }),
                 new Rule('Incorrect street name', function (text) {
-                    return text.replace(/^СНТ\s(.*)/, '$1 снт');
+                    return text.replace(/^СН?Т\s(.*)/, '$1 снт');
                 }),
                 new Rule('Incorrect street name', function (text) {
                     return text.replace(/^ЖД$/i, 'ж/д');
