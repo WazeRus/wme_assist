@@ -425,6 +425,9 @@ function run_wme_assist() {
                         text = text.replace( new RegExp('^(' + nStatus + ')(?:\\s+)(.+[ео]е)$'), '$2 $1');
                     }
 
+                    // Убираем окончания числительных
+                    text = text.replace(/(\d+)-(?:[иоы]?й|я)\s+/g, '$1 ');
+
                     // Возвращаем скобки в конце
                     return text + ' ' + brackets;
                 }),
