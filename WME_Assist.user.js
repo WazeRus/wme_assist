@@ -336,7 +336,7 @@ function run_wme_assist() {
                                 || ( space == '-' && /^(лейтенанта|майора|полковника|губернатора|й|я|ти|го|е|ей|х)$/.test(word) ) )
                                  return space + word.toLowerCase();
                             else return space + word.charAt(0).toUpperCase() + word.substr(1);
-                    }).replace(/\s+(.*)/, '$1').replace(/Железная дорога/, 'железная дорога');
+                    }).replace(/\s+(.*)/, '$1').replace(/Железная дорога/, 'железная дорога').replace(/микрорайон в/i, 'микрорайон В');
 
                     // Статусы женского рода
                     if ( new RegExp('(^|\\s)(' + wStatus + ')(\\s|$)').test(text) ) {
