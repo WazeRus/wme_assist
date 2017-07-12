@@ -208,8 +208,7 @@ function run_wme_assist() {
                     return text.replace(/(\d)(\sЛет)(\s|$)/, '$1 лет$3');
                 }),
                 new Rule('Incorrect street name', function (text) {
-                    return text.replace(/(№)(\d)/, '$1 $2')
-                               .replace(/(Проектируемый проезд)\s+(\d+[A-Я]?)/, '$1 № $2');
+                    return text.replace(/(Проектируемый проезд)\s+[№#]\s*(\d+)/, '$1 $2');
                 }),
                 new Rule('Incorrect street name', function (text) {
                     return text.replace(/([а-яё])-\s+/, '$1 - ');
