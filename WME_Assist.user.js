@@ -190,7 +190,7 @@ function run_wme_assist() {
                     return text.replace(/(\d)(-ая)( |$)/, '$1-я$3');
                 }),
                 new Rule('Incorrect street name', function (text) {
-                    return text.replace(/(\d)(-ого|-ое)( |$)/, '$1$3');
+                    return text.replace(/(\d)(-о?го|-ое)( |$)/, '$1$3');
                 }),
                 new Rule('Incorrect street name', function (text) {
                     return text.replace(/(\d)(-[оыи]й)( |$)/, '$1-й$3');
