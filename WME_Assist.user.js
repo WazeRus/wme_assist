@@ -8,13 +8,13 @@
 // @match     https://world.waze.com/map-editor/*
 // @match     https://world.waze.com/beta_editor/*
 // @match     https://www.waze.com/map-editor/*
-// @require   https://greasyfork.org/scripts/18134-wme-assist-scanner/code/WME_Assist_Scanner.js?version=114404
-// @require   https://greasyfork.org/scripts/18135-wme-assist-analyzer/code/WME_Assist_Analyzer.js?version=114406
+// @require   https://github.com/WazeRus/wme_assist/raw/Griev0us/scaner.js
+// @require   https://github.com/WazeRus/wme_assist/raw/Griev0us/analyzer.js
 // @grant     none
 // @include   https://editor-beta.waze.com/*
 // @include   https://*.waze.com/editor/editor/*
 // @include   https://*.waze.com/*/editor/*
-// @version   0.5.1
+// @version   0.5.19
 // @namespace https://greasyfork.org/users/20609
 // ==/UserScript==
 
@@ -50,7 +50,7 @@ WME_Assist.series = function (array, start, action, alldone) {
 }
 
 function run_wme_assist() {
-    var ver = '0.5.1';
+    var ver = '0.5.19';
 
     var debug = WME_Assist.debug;
     var info = WME_Assist.info;
@@ -97,7 +97,7 @@ function run_wme_assist() {
                     return text.replace(/\s+/g, ' ');
                 }),
                 new Rule('ACUTE ACCENT in street name', function (text) {
-                    return text.replace(/\u0301/g, '');
+                    return text.replace(/\u0301|\u0300/g, '');
                 }),
                 new Rule('Dash in street name', function (text) {
                     return text.replace(/\u2010|\u2011|\u2012|\u2013|\u2014|\u2015|\u2043|\u2212|\u2796/g, '-');
@@ -105,8 +105,8 @@ function run_wme_assist() {
                 new Rule('No space after the word', function (text) {
                     return text.replace(/\.(?!\s)/g, '. ');
                 }),
-                new Rule('Garbage dot', function (text) {
-                    return text.replace(/(^|\s+)\./g, '$1');
+                new Rule('Мусорный знак препинания после пробела', function (text) {
+                    return text.replace(/(^|\s+)(\.|,|;)/g, '$1');
                 }),
                 new Rule('Incorrect street name', function (text) {
                     return text.replace(/улицаица/, 'улица');
@@ -119,6 +119,9 @@ function run_wme_assist() {
                 }),
                 new Rule('Incorrect street name', function (text) {
                     return text.replace(/(^| )(мкрн?\.?|мк?р?-н)( |$)/, '$1микрорайон$3');
+                }),
+                new Rule('Incorrect street name', function (text) {
+                    return text.replace(/(^| )(р-о?н)( |$)/, '$1район$3');
                 }),
                 new Rule('Incorrect street name', function (text) {
                     return text.replace(/(^| )(им\.?)( |$)/, '$1имени$3');
@@ -139,6 +142,9 @@ function run_wme_assist() {
                     return text.replace(/(^| )(р-д)( |$)/i, '$1разъезд$3');
                 }),
                 new Rule('Incorrect street name', function (text) {
+                    return text.replace(/(^| )(з-д)( |$)/i, '$1заезд$3');
+                }),
+                new Rule('Incorrect street name', function (text) {
                     return text.replace(/(^| )(пер\.?)( |$)/i, '$1переулок$3');
                 }),
                 new Rule('Incorrect street name', function (text) {
@@ -157,7 +163,7 @@ function run_wme_assist() {
                     return text.replace(/(^| )(ш\.?)( |$)/, '$1шоссе$3');
                 }),
                 new Rule('Incorrect street name', function (text) {
-                    return text.replace(/(^| )(б-р)( |$)/i, '$1бульвар$3');
+                    return text.replace(/(^| )(б-р|бул\.?)( |$)/i, '$1бульвар$3');
                 }),
                 new Rule('Incorrect street name', function (text) {
                     return text.replace(/(^| )(дор\.)( |$)/i, '$1дорога$3');
@@ -184,7 +190,7 @@ function run_wme_assist() {
                     return text.replace(/(\d)(-ая)( |$)/, '$1-я$3');
                 }),
                 new Rule('Incorrect street name', function (text) {
-                    return text.replace(/(\d)(-ого|-ое)( |$)/, '$1$3');
+                    return text.replace(/(\d)(-о?го|-ое)( |$)/, '$1$3');
                 }),
                 new Rule('Incorrect street name', function (text) {
                     return text.replace(/(\d)(-[оыи]й)( |$)/, '$1-й$3');
@@ -202,8 +208,7 @@ function run_wme_assist() {
                     return text.replace(/(\d)(\sЛет)(\s|$)/, '$1 лет$3');
                 }),
                 new Rule('Incorrect street name', function (text) {
-                    return text.replace(/(№)(\d)/, '$1 $2')
-                               .replace(/(Проектируемый проезд)\s+(\d+[A-Я]?)/, '$1 № $2');
+                    return text.replace(/(Проектируемый проезд)\s+[№#]\s*(\d+)/, '$1 $2');
                 }),
                 new Rule('Incorrect street name', function (text) {
                     return text.replace(/([а-яё])-\s+/, '$1 - ');
@@ -215,7 +220,7 @@ function run_wme_assist() {
                     return text.replace(/\[([^P]+)\]/, '$1');
                 }),
                 new Rule('Incorrect street name', function (text) {
-                    return text.replace(/^СНТ\s(.*)/, '$1 снт');
+                    return text.replace(/(^|\()СН?Т\s([^\)]+)/, '$1$2 снт');
                 }),
                 new Rule('Incorrect street name', function (text) {
                     return text.replace(/^ЖД$/i, 'ж/д');
@@ -240,28 +245,29 @@ function run_wme_assist() {
                 new Rule('Incorrect status position', function (text) {
                     // Неоднозначные улицы, требуется проверка на город
                     // Москва: Козлова, Мишина
-                    // Питер: Гусева, Комарова, Панфилова, Тарасова, Старцева, Крюкова, Миронова, Перфильева, Шарова
+                    // Питер: Абросимова, Гусева, Комарова, Панфилова, Тарасова, Старцева, Крюкова, Миронова, Перфильева, Шарова, Зеленина
                     // Великий Новгород: Яковлева, Ильина
+                    // Ижевск: Черезова
                     // Краткие притяжательные прилагательные похожие на фамилии
-                    var exAdjW = 'Репищева|Зеленина|Карташихина|Опочинина|Остоумова|Гаврикова|Прасковьина|Усачёва|Бармалеева|Ильмянинова|Остоумова|Плуталова|Подрезова|Полозова|Рашетова|Сегалева|Шамшева|Эсперова|Замшина|Куракина|Ольгина|Опочинина|Осокина|Рюхина|Тосина|Веткина';
+                    var exAdjW = 'Репищева|Малая Зеленина|Карташихина|Опочинина|Остоумова|Гаврикова|Прасковьина|Усачёва|Бармалеева|Ильмянинова|Остоумова|Плуталова|Подрезова|Полозова|Рашетова|Сегалева|Шамшева|Эсперова|Замшина|Куракина|Ольгина|Опочинина|Осокина|Рюхина|Тосина|Веткина|Жукова|Абросимова|Черезова|Алымова|Княжнина|Ванчакова';
 
                     // Женские статусы
                     var wStatus = 'улица|набережная|дорога|линия|аллея|площадь|просека|автодорога|эстакада|магистраль|дамба|хорда|коса|деревня|переправа|площадка|дорожка|трасса';
 
                     // Мужские статусы
-                    var mStatus = 'проспект|переулок|проезд|тупик|бульвар|тракт|объезд|заезд|съезд|просек|взвоз|спуск|разъезд|переезд|квартал|путепровод|мост|обвод|обход|подъезд|сад|сквер|тоннель|туннель|парк|проток|канал|остров|микрорайон|район|городок|посёлок|поселок|вал|проулок';
+                    var mStatus = 'проспект|переулок|проезд|тупик|бульвар|тракт|просек|взвоз|спуск|разъезд|переезд|квартал|путепровод|мост|сад|сквер|тоннель|туннель|парк|проток|канал|остров|микрорайон|район|городок|посёлок|поселок|вал|проулок|объезд|заезд|съезд|обвод|обход|подъезд';
 
                     // Средние статусы
-                    var nStatus = 'шоссе|кольцо';
+                    var nStatus = 'шоссе|кольцо|село';
 
                     // Не нужно добавлять статус или изменять порядок слов
-                    var exStatus = 'дцать\\s|десят\\s|сорок\\s|closed|^\\d+(:|$)|[Дд]убл[её]р|\\d+[AB]|[МАР]\\d|\\d{2}[АКНР]-\\d|Rail|грунтовка|[Тт]ропа|[Тт]рек|[Пп]лотина|метро|монорельс|ворота|шлагбаум|трамвай|пути$|Транссиб|Мост|подход|подъезд|обход|въезд|выезд|разворот|шлагбаум|слобода|Грейдер|(?: |^)из |(?: |^)от |(?: |^)на |(?: |^)в |(?: |^)к |^под |^с |^от |ж\\/д|ТТК|КАД|ЗСД|АГ?ЗС|^$| - |\\/|,|плотина|снт|станция|:|[Пп]ромзона|паркинг|парковка|Козлова|Гусева|Комарова|Панфилова|Тарасова|Яковлева|Мишина|Старцева|Крюкова|Ильина|Миронова|Перфильева|Шарова';
+                    var exStatus = 'лестница|зимник|объезд|заезд|съезд|обвод|обход|подъезд|дцать\\s|десят\\s|сорок\\s|closed|[Сс]троительство|^\\d+(:|$)|[Дд]убл[её]р|\\d+[AB]|[МАР]\\d|\\d{2}[АКНР]-|Rail|грунтовка|[Тт]ропа|[Тт]рек|[Пп]лотина|метро|монорельс|ворота|шлагбаум|трамвай|пути$|Транссиб|Мост|подход|подъезд|обход|въезд|выезд|разворот|шлагбаум|слобода|Грейдер|брод|(?: |^)на |(?: |^)в |(?: |^)к |(?: |^)под |(?: |^)с |(?: |^)от |(?: |^)во |(?: |^)из |(?: |^)по |(?: |^)об |(?: |^)у |(?: |^)о |(?: |^)над |(?: |^)около |(?: |^)при |(?: |^)перед |(?: |^)про |(?: |^)до |(?: |^)без |(?: |^)за |(?: |^)через |ж\\/д|ТТК|КАД|ЗСД|АГ?ЗС|^$| - |\\/|,|плотина|(?: |^)снт|(?: |^)кп|станция|:|[Пп]ромзона|паркинг|парковка|Козлова|Абросимова|Гусева|Комарова|Панфилова|Тарасова|Яковлева|Мишина|Старцева|Крюкова|Ильина|Миронова|Перфильева|Шарова|Зеленина|Жукова|Черезова';
 
                     // Названия улиц похожие на прилагательные
-                    var exW = 'Нехая|Тукая|Мая|Барклая|Батырая|Маклая|Бикбая|Амантая|Нечая|Эшпая|Орая|Прикамья|Алтая|Ухсая|Хузангая|Галлая|Николая|Гая|Эркая|Камая|Пченушая|Здоровья|Палантая|Ярвенпяя|Гулая|Заполярья|Крылья|Приморья|Калина Красная';
+                    var exW = 'Нехая|Тукая|Мая|Барклая|Батырая|Маклая|Бикбая|Амантая|Нечая|Эшпая|Орая|Прикамья|Алтая|Ухсая|Хузангая|Галлая|Николая|Гая|Эркая|Камая|Пченушая|Здоровья|Палантая|Ярвенпяя|Гулая|Заполярья|Крылья|Приморья|Калина Красная|Краснолесья|Мазая|Умырзая|Абая';
 
                     // Названия проспектов похожие на прилагательные
-                    var exM = 'Расковой|Дуровой|Космодемьянской|.+?строй|Ковалевской|Борисовой|Давлетшиной|Крупской|Шевцовой|Чайкиной|Богомоловой|Савиной|Попковой|Петровой|Ангелиной|Терешковой|Новоселовой|Красноармейской|Гризодубовой|Красноярский рабочий|Цеткин|Молдагуловой|Чайкиной|Цветаевой|Тимофеевой|Дубровиной|Ульяны Громовой|[Нн]абережной|Давлетшиной|Перовской|Шпаковой|Ульяновой|Гачхой|Исаевой|Бой';
+                    var exM = 'Расковой|Дуровой|Космодемьянской|.+?строй|Ковалевской|Борисовой|Давлетшиной|Крупской|Шевцовой|Чайкиной|Богомоловой|Савиной|Попковой|Петровой|Ангелиной|Терешковой|Новоселовой|Красноармейской|Гризодубовой|Красноярский рабочий|Цеткин|Молдагуловой|Чайкиной|Цветаевой|Тимофеевой|Дубровиной|Ульяны Громовой|[Нн]абережной|Давлетшиной|Перовской|Шпаковой|Ульяновой|Гачхой|Исаевой|Бой|Плевицкой';
 
                     // Отделить примечания в скобках (дублёр)
                     var brackets = '';
@@ -306,7 +312,7 @@ function run_wme_assist() {
                     // Голые числительные без склонения
                     if ( ! new RegExp('\\d\\s+мая(\\s|$)', 'i' ).test(text) )
                         text = text.replace(new RegExp('(\\d)(?=(\\s+[^\\s]+(?:-я|ая|ья|яя|яся))*\\s+(' + wStatus + ')(\\s|$))', 'g'), '$1-я'); // 1 линия
-                    text = text.replace(new RegExp('(\\d)(?=(\\s+[^\\s]+[-иоы]й|ин|[оеё]в)*\\s+(' + mStatus + ')(\\s|$))', 'g'), '$1-й'); // 2 проезд, 5 Донской проезд
+                    text = text.replace(new RegExp('(\\d)(?=(\\s+[^\\s]+(?:[-иоы]й|ин|[оеё]в))*\\s+(' + mStatus + ')(\\s|$))', 'g'), '$1-й'); // 2 проезд, 5 Донской проезд
 
                     // Распространённые сокращения
                     text = text.replace(/М\.\s+(?=Горького)/, 'Максима ');
@@ -325,11 +331,11 @@ function run_wme_assist() {
                                     foundStatus = true;
                                     return all;
                                 };
-                            if ( /^(летия|лет|года|реч?к[аи]|канала?|острова?|стороны|год|съезда|имени|ручей|канавки|за|из|от|км|километр|де|в|к|о|с|у|на|и)$/i.test(word)
-                                || ( space == '-' && /^(лейтенанта|майора|полковника|й|я|ти|го|е|ей|х)$/.test(word) ) )
+                            if ( /^(летия|лет|года|реч?к[аи]|канала?|острова?|стороны|год|съезда|имени|области|ручей|канавки|за|из|от|км|километр|де|в|к|о|с|у|на|и)$/i.test(word)
+                                || ( space == '-' && /^(лейтенанта|майора|полковника|губернатора|й|я|ти|го|е|ей|х)$/.test(word) ) )
                                  return space + word.toLowerCase();
                             else return space + word.charAt(0).toUpperCase() + word.substr(1);
-                    }).replace(/\s+(.*)/, '$1').replace(/Железная дорога/, 'железная дорога');
+                    }).replace(/\s+(.*)/, '$1').replace(/Железная дорога/, 'железная дорога').replace(/микрорайон в/i, 'микрорайон В');
 
                     // Статусы женского рода
                     if ( new RegExp('(^|\\s)(' + wStatus + ')(\\s|$)').test(text) ) {
@@ -364,9 +370,9 @@ function run_wme_assist() {
                         // Мягкая 1-я -> 1-я Мягкая
                         text = text.replace(/(.+(?:ая|ья|яя|яся))(?:\s+)(\d+-я)(?! Линия| Ферма| Рота)/, '$2 $1');
                         // улица 1-я Строителей -> 1-я улица Строителей
-                        text = text.replace(new RegExp('(' + wStatus + ')(?:\\s+)(\\d+-я)(?!\\s+[^\\s]+(?:ая|ья|яя|яся|ка)( |$)|\\s+(' + wStatus + '|Ферма|Авеню|Пристань|Рота|Слобода))', 'i'), '$2 $1');
+                        text = text.replace(new RegExp('(' + wStatus + ')(?:\\s+)(\\d+-я)(?!\\s+[^\\s]+(?:ая|ья|яя|яся|лка)( |$)|\\s+(' + wStatus + '|Ферма|Авеню|Пристань|Рота|Слобода))', 'i'), '$2 $1');
                         // 1-я улица Лесоперевалка -> улица 1-я Лесоперевалка
-                        text = text.replace(new RegExp('(\\d+-я)\\s+(' + wStatus + ')\\s+([^\\s]+(?:лка|ель))$'), '$2 $1 $3');
+                        text = text.replace(new RegExp('(\\d+-я)\\s+(' + wStatus + ')\\s+([^\\s]+(?:лка|ель|аза|йка|летка))$'), '$2 $1 $3');
                     } else
 
                     // Статусы мужского рода
@@ -386,13 +392,14 @@ function run_wme_assist() {
                             });
 
                         // Прилагательное вперёд
-                        if ( ! new RegExp('(^|\\s)(' + exM + ')(\\s|$)', 'i').test(text) ) {
+                        if (( ! new RegExp('(^|\\s)(' + exM + ')(\\s|$)', 'i').test(text) ) &&
+                            ( ! new RegExp('^(проезд|переулок)([^\.]*?)((?:\\s+[^\\s]+ой)+)$').test(text) ) ) {
                             // переулок *** 1-й -> 1-й переулок ***
-                            text = text.replace(new RegExp('(' + mStatus + ')([^\.]*?)((?:\\s+[^\\s]+(?:[-иоы]й|ин))+)$'), '$3 $1$2');
+                            text = text.replace(new RegExp('^(' + mStatus + ')([^\.]*?)((?:\\s+[^\\s]+(?:[-иоы]й|ин))+)$'), '$3 $1$2');
                             text = text.replace(
-                                new RegExp('(' + mStatus + ')((?:\\s+[^\\s]+(?:[-иоы]й|ин))+)$'), '$2 $1');
+                                new RegExp('^(' + mStatus + ')((?:\\s+[^\\s]+(?:[-иоы]й|ин))+)$'), '$2 $1');
                             text = text.replace(
-                                new RegExp('(' + mStatus + ')(?:\\s+)([^\\s]+(?:[-иоы]й|ин))(?=\\s+\\d+-й\\s+Проезд|\\s+\\d+-я\\s+Линия)'), '$2 $1');
+                                new RegExp('^(' + mStatus + ')(?:\\s+)([^\\s]+(?:[-иоы]й|ин))(?=\\s+\\d+-й\\s+Проезд|\\s+\\d+-я\\s+Линия)'), '$2 $1');
                         }
 
                          // Числительное всегда вначале если оно согласовано с прилагательным
@@ -400,7 +407,7 @@ function run_wme_assist() {
                         //text = text.replace(new RegExp('(' + mStatus + ')(?:\\s+)(\\d+-й)(?!\\s+[^\\s]*(?:' + exM + ')|\\s+[^\\s]+(?:[-иоы]й|ин|[оеё]в)( |$)', 'i'), '$2 $1');
 
                         text = text.replace(/(.+[иоы]й)(?:\s+)(\d+-й)/, '$2 $1');
-                        text = text.replace(new RegExp('(' + mStatus + ')(?:\\s+)(\\d+-й)(?!\\s+[^\\s]+[иоык][ий]( |$)|\\s+(' + mStatus + '|Ряд|км))', 'i'), '$2 $1');
+                        text = text.replace(new RegExp('(' + mStatus + ')(?:\\s+)(\\d+-й)(?!\\s+[^\\s]+[иоык][ий]( |$)|\\s+(' + mStatus + '|Ряд|км|Поворот))', 'i'), '$2 $1');
                     } else
 
                     // Статусы среднего рода
@@ -423,6 +430,12 @@ function run_wme_assist() {
                 new Rule('Move status to begin of name', function (text) {
                     return text.replace(/(.*)(улица)(.*)/, '$2 $1 $3');
                 }, 'Tula'),
+                new Rule('Убираем окончания числительных', function (text) {
+                    return  text
+                      .replace(new RegExp('(\\d)-я(?=(\\s+[^\\s]+(?:-я|ая|ья|яя|яся))*\\s+(улица|набережная|дорога|линия|Линия|аллея|площадь|просека|автодорога|эстакада|магистраль|дамба|хорда|коса|деревня|переправа|площадка|дорожка|трасса|Новостройка|Лесоперевалка|Ферма|Авеню|Пристань|Рота|Слобода|Пятилетка)(\\s|$))', 'g'), '$1')
+                      .replace(new RegExp('(\\d)-й(?=(\\s+[^\\s]+(?:[-иоы]й|ин|[оеё]в))*\\s+(проспект|переулок|проезд|тупик|бульвар|тракт|просек|взвоз|спуск|разъезд|переезд|квартал|Квартал|путепровод|мост|сад|сквер|тоннель|туннель|парк|проток|канал|остров|микрорайон|район|городок|посёлок|поселок|вал|проулок|Поляны|Пятилетки|Участок|Половины)(\\s|$))', 'g'), '$1');
+
+                }, 'Moscow'),
                 new ExperimentalRule('Experimental', function (text) {
                     return text.replace(/experimental/, 'corrected_experimental');
                 }),
@@ -523,20 +536,23 @@ function run_wme_assist() {
             var commonRules = [
                 // Following rules must be at the end because
                 // previous rules might insert additional spaces
-                new Rule('Redundant space in street name', function (text) {
-                    return text.replace(/[ ]+/g, ' ');
+                new Rule('Лишние пробелы', function (text) {
+                    return text.replace(/[\s]+/g, ' ');
                 }),
-                new Rule('Space at the begin of street name', function (text) {
-                    return text.replace(/^[ ]*/, '');
+                new Rule('Пробелы в начале улицы или после открывающей скобки', function (text) {
+                    return text.replace(/(^|\()[\s]+/, '$1');
                 }),
-                new Rule('Space at the end of street name', function (text) {
-                    return text.replace(/[ ]*$/, '');
+                new Rule('Пробелы в конце улицы или перед закрывающей скобкой', function (text) {
+                    return text.replace(/[\s]+(\)|$)/, '$1');
                 }),
             ];
             var countryRules;
             info('Get rules for country: ' + name);
             switch (name) {
             case 'Russia':
+                countryRules = rules_RU();
+                break;
+            case 'Ukraine':
                 countryRules = rules_RU();
                 break;
             case 'Belarus':
@@ -741,7 +757,7 @@ function run_wme_assist() {
         this.renameCity = function (oldname, newname) {
             var oldcity = wazeapi.model.cities.getByAttributes({name: oldname});
 
-            if (oldcity.length == 0) {
+            if (oldcity.length === 0) {
                 console.log('City not found: ' + oldname);
                 return false;
             }
@@ -915,7 +931,7 @@ function run_wme_assist() {
             mainWindow.dialog('open');
             mainWindow.dialog('option', 'position', {
                 my: 'right top',
-                at: 'right top',
+                at: 'right-50 top',
                 of: '#WazeMap',
             });
             // Minimize window
@@ -1379,7 +1395,7 @@ function run_wme_assist() {
 
         // Does not get jQuery.ui
         // Relies on WME Toolbox plugin
-        if (wazeapi == null || !jQuery.ui) {
+        if (wazeapi === null || !jQuery.ui) {
             console.log("WME ASSIST: waiting for Waze");
             setTimeout(function () {
                 waitForWaze(done);
