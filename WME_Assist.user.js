@@ -15,7 +15,7 @@
 // @include   https://*.waze.com/editor/editor/*
 // @include   https://*.waze.com/*/editor/*
 // @version   0.5.22
-// @namespace https://greasyfork.org/users/20609
+// @namespace WazeRus
 // ==/UserScript==
 
 var WME_Assist = WME_Assist || {}
