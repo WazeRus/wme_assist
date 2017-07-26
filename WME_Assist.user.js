@@ -8,13 +8,13 @@
 // @match     https://world.waze.com/map-editor/*
 // @match     https://world.waze.com/beta_editor/*
 // @match     https://www.waze.com/map-editor/*
-// @require   https://github.com/WazeRus/wme_assist/raw/master/scaner.js
-// @require   https://github.com/WazeRus/wme_assist/raw/master/analyzer.js
+// @require   https://greasyfork.org/scripts/31773-wme-assist-scanner/code/WME_Assist_Scanner.user.js
+// @require   https://greasyfork.org/scripts/31774-wme-assist-analyzer/code/WME_Assist_Analyzer.user.js
 // @grant     none
 // @include   https://editor-beta.waze.com/*
 // @include   https://*.waze.com/editor/editor/*
 // @include   https://*.waze.com/*/editor/*
-// @version   0.5.21
+// @version   0.5.22
 // @namespace https://greasyfork.org/users/20609
 // ==/UserScript==
 
@@ -50,7 +50,7 @@ WME_Assist.series = function (array, start, action, alldone) {
 }
 
 function run_wme_assist() {
-    var ver = '0.5.21';
+    var ver = '0.5.22';
 
     var debug = WME_Assist.debug;
     var info = WME_Assist.info;
