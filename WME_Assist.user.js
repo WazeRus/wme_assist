@@ -324,18 +324,23 @@ function run_wme_assist() {
                     // Всё пишем заглавными буквами, кроме статусов, предлогов и гидронимов
                     text = text.replace(/(^|\s+)набережная улица/, '$1Набережная улица');
                     var foundStatus = false;
-                    text = (' ' + text).replace(/([-\s])([^-\s]+)/g,
-                        function(all, space, word) {
-                            if ( ! foundStatus )
-                                if ( new RegExp('^(' + wStatus+ '|' + mStatus + '|' + nStatus + ')$').test(word) ) {
-                                    foundStatus = true;
-                                    return all;
-                                };
-                            if ( /^(летия|лет|года|реч?к[аи]|канала?|острова?|стороны|год|съезда|имени|области|ручей|канавки|за|из|от|км|километр|де|в|к|о|с|у|на|и)$/i.test(word)
-                                || ( space == '-' && /^(лейтенанта|майора|полковника|губернатора|й|я|ти|го|е|ей|х)$/.test(word) ) )
-                                 return space + word.toLowerCase();
-                            else return space + word.charAt(0).toUpperCase() + word.substr(1);
-                    }).replace(/\s+(.*)/, '$1').replace(/Железная дорога/, 'железная дорога').replace(/микрорайон в/i, 'микрорайон В');
+                    text = (' ' + text)
+                        .replace(/([-\s])([^-\s]+)/g,
+                            function(all, space, word) {
+                                if ( ! foundStatus )
+                                    if ( new RegExp('^(' + wStatus+ '|' + mStatus + '|' + nStatus + ')$').test(word) ) {
+                                        foundStatus = true;
+                                        return all;
+                                    };
+                                if ( /^(летия|лет|года|реч?к[аи]|канала?|острова?|стороны|год|съезда|имени|области|ручей|канавки|за|из|от|км|километр|де|в|к|о|с|у|на|и)$/i.test(word)
+                                    || ( space == '-' && /^(лейтенанта|майора|полковника|губернатора|й|я|ти|го|е|ей|х)$/.test(word) ) )
+                                     return space + word.toLowerCase();
+                                else return space + word.charAt(0).toUpperCase() + word.substr(1);
+                            })
+                        .replace(/\s+(.*)/, '$1')
+                        .replace(/Железная дорога/, 'железная дорога')
+                        .replace(/пос[её]лок остров/i, 'поселок Остров')
+                        .replace(/микрорайон в/i, 'микрорайон В');
 
                     // Статусы женского рода
                     if ( new RegExp('(^|\\s)(' + wStatus + ')(\\s|$)').test(text) ) {
