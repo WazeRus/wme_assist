@@ -793,11 +793,11 @@ function run_wme_assist() {
                         request[problem.attrName] = correctStreet.getID();
                         wazeapi.model.actionManager.add(new WazeActionUpdateObject(obj, request));
                     } else {
-                        ui.updateProblem(problem.object.id, '(user fix: ' + currentValue + ')');
+                        ui.updateProblem(problem.object.id, '(ручное: ' + currentValue + ')');
                     }
                     deferred.resolve(obj.getID());
                 } else if (--attemptNum <= 0) {
-                    ui.updateProblem(problem.object.id, '(was not fixed. Deleted?)');
+                    ui.updateProblem(problem.object.id, '(Не исправлено. Удалено?)');
                     deferred.resolve(problem.object.id);
                 } else {
                     wazeapi.model.events.register('mergeend', map, fix);
@@ -821,14 +821,14 @@ function run_wme_assist() {
         section.style.paddingTop = "8px";
         section.style.textIndent = "16px";
         section.id = "assist_options";
-        section.innerHTML = '<b>Editor Options</b><br/>' +
-            '<label><input type="checkbox" id="assist_enabled" value="0"/> Enable/disable</label><br/>' +
-            '<label><input type="checkbox" id="assist_debug" value="0" checked/> Debug</label><br/>';
+        section.innerHTML = '<b>Настройки:</b><br/>' +
+            '<label><input type="checkbox" id="assist_enabled" value="0"/> Включен</label><br/>' +
+            '<label><input type="checkbox" id="assist_debug" value="0" checked/> Отладка</label><br/>';
         var variant = document.createElement('p');
         variant.id = 'variant_options';
-        variant.innerHTML = '<b>Variants</b><br/>' +
-            '<label><input type="radio" name="assist_variant" value="Moscow" checked/> Moscow</label><br/>' +
-            '<label><input type="radio" name="assist_variant" value="Tula"/> Tula</label><br/>';
+        variant.innerHTML = '<b>Правила:</b><br/>' +
+            '<label><input type="radio" name="assist_variant" value="Moscow" checked/> Россия</label><br/>' +
+            '<label><input type="radio" name="assist_variant" value="Tula"/> Тула</label><br/>';
         section.appendChild(variant);
         addon.appendChild(section);
 
@@ -837,10 +837,10 @@ function run_wme_assist() {
         section.style.textIndent = "16px";
         section.id = "assist_custom_rules";
         $(section)
-            .append($('<p>').addClass('message').css({'font-weight': 'bold'}).text('Custom rules'))
-            .append($('<button>').prop('id', 'assist_add_custom_rule').addClass('btn btn-default btn-primary').text('Add'))
-            .append($('<button>').prop('id', 'assist_edit_custom_rule').addClass('btn btn-default').text('Edit'))
-            .append($('<button>').prop('id', 'assist_del_custom_rule').addClass('btn btn-default btn-warning').text('Del'))
+            .append($('<p>').addClass('message').css({'font-weight': 'bold'}).text('Пользовательские правила'))
+            .append($('<button>').prop('id', 'assist_add_custom_rule').addClass('btn btn-default btn-primary').text('Добавить'))
+            .append($('<button>').prop('id', 'assist_edit_custom_rule').addClass('btn btn-default').text('Изменить'))
+            .append($('<button>').prop('id', 'assist_del_custom_rule').addClass('btn btn-default btn-warning').text('Удалить'))
             .append($('<ul>').addClass('result-list'));
         addon.appendChild(section);
 
@@ -849,7 +849,7 @@ function run_wme_assist() {
         section.style.textIndent = "16px";
         section.id = "assist_exceptions";
         $(section)
-            .append($('<p title="Right click on error in list to add">').addClass('message').css({'font-weight': 'bold'}).text('Exceptions'))
+            .append($('<p title="Right click on error in list to add">').addClass('message').css({'font-weight': 'bold'}).text('Исключения'))
             .append($('<ul>').addClass('result-list'));
         addon.appendChild(section);
 
@@ -953,10 +953,10 @@ function run_wme_assist() {
             .append($('<div>').css({
                 padding: 10,
             })
-                    .append($('<button id="assist_fixall_btn" class="btn btn-danger">Fix all</button>'))
-                    .append($('<button id="assist_scanarea_btn" class="btn btn-warning">Scan area</button>'))
-                    .append($('<button id="assist_clearfixed_btn" class="btn btn-success">Clear fixed</button>'))
-                    .append($('<h2>Unresolved issues</h2>').css({
+                    .append($('<button id="assist_fixall_btn" class="btn btn-danger">Исправить</button>'))
+                    .append($('<button id="assist_scanarea_btn" class="btn btn-warning">Скан</button>'))
+                    .append($('<button id="assist_clearfixed_btn" class="btn btn-success">Очистить</button>'))
+                    .append($('<h2>Проблемы</h2>').css({
                         'font-size': '100%',
                         'font-weight': 'bold',
                     }))
@@ -968,7 +968,7 @@ function run_wme_assist() {
             .append($('<div>').css({
                 padding: 10,
             })
-                    .append($('<h2>Fixed issues</h2>').css({
+                    .append($('<h2>Исправлено</h2>').css({
                         'font-size': '100%',
                         'font-weight': 'bold',
                     }))
@@ -980,17 +980,17 @@ function run_wme_assist() {
             .appendTo($('#WazeMap'));
 
         $('<div>').prop('id', 'assist_custom_rule_dialog')
-            .append($('<p>All form fields are required</p>'))
+            .append($('<p>Заполните все поля</p>'))
             .append($('<form>')
                     .append($('<fieldset>')
-                            .append($('<label>').prop('for', 'oldname').text('RegExp'))
+                            .append($('<label>').prop('for', 'oldname').text('Регулярное выражение'))
                             .append($('<input>', {
                                 type: 'text',
                                 name: 'oldname',
                                 'class': 'text ui-widget-content ui-corner-all',
                                 id: 'oldname',
                             }))
-                            .append($('<label>').prop('for', 'newname').text('Replace text'))
+                            .append($('<label>').prop('for', 'newname').text('Текст замены'))
                             .append($('<input>', {
                                 type: 'text',
                                 name: 'newname',
@@ -1041,21 +1041,21 @@ function run_wme_assist() {
         mainWindow.prev('.ui-dialog-titlebar').find('.ui-dialog-title')
             .append($('<span>', {
                 id: 'assist-error-num',
-                title: 'Number of unresolved issues',
+                title: 'Количество нерешенных проблем',
                 text: 0,
             }).css({color: 'red'}));
         mainWindow.prev('.ui-dialog-titlebar').find('.ui-dialog-title').append($('<span> / </span>'));
         mainWindow.prev('.ui-dialog-titlebar').find('.ui-dialog-title')
             .append($('<span>', {
                 id: 'assist-fixed-num',
-                title: 'Number of fixed issues',
+                title: 'Количество исправленных',
                 text: 0,
             }).css({color: 'green'}));
         mainWindow.prev('.ui-dialog-titlebar').find('.ui-dialog-title').append($('<span> - </span>'));
         mainWindow.prev('.ui-dialog-titlebar').find('.ui-dialog-title')
             .append($('<span>', {
                 id: 'assist-scan-progress',
-                title: 'Scan progress',
+                title: 'Прогресс сканирования',
                 text: 0,
             }).css({color: 'blue'}));
 
@@ -1074,13 +1074,13 @@ function run_wme_assist() {
         mainWindow.prev('.ui-dialog-titlebar').find('button').click(function () {
             if ($('#WME_AssistWindow').is(':visible')) {
                 $('#WME_AssistWindow').hide();
-                btn.prop('title', 'maximize');
+                btn.prop('title', 'Развернуть');
 
                 icon.removeClass('ui-icon-minusthick');
                 icon.addClass('ui-icon-arrow-4-diag');
             } else {
                 $('#WME_AssistWindow').show();
-                btn.prop('title', 'minimize');
+                btn.prop('title', 'Свернуть');
 
                 icon.addClass('ui-icon-minusthick');
                 icon.removeClass('ui-icon-arrow-4-diag');
@@ -1246,7 +1246,7 @@ function run_wme_assist() {
 
         analyzer.onExceptionAdd(function (name) {
             ui.addException(name, function (index) {
-                if (confirm('Delete exception for ' + name + '?')) {
+                if (confirm('Удалить исключение: ' + name + '?')) {
                     analyzer.removeException(index);
                 }
             });
@@ -1375,7 +1375,7 @@ function run_wme_assist() {
                         rules.update(id, response.oldname, response.newname);
                     });
                 } else {
-                    alert('Custom rule is not selected');
+                    alert('Правило не выбрано');
                 }
             });
 
@@ -1384,7 +1384,7 @@ function run_wme_assist() {
                 if (id >= 0) {
                     rules.remove(id);
                 } else {
-                    alert('Custom rule is not selected');
+                    alert('Правило не выбрано');
                 }
             });
 
