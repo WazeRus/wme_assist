@@ -14,7 +14,7 @@
 // @include   https://editor-beta.waze.com/*
 // @include   https://*.waze.com/editor/editor/*
 // @include   https://*.waze.com/*/editor/*
-// @version   0.5.25
+// @version   0.5.26
 // @namespace WazeRus
 // ==/UserScript==
 
@@ -50,7 +50,7 @@ WME_Assist.series = function (array, start, action, alldone) {
 }
 
 function run_wme_assist() {
-    var ver = '0.5.25';
+    var ver = '0.5.26';
 
     var debug = WME_Assist.debug;
     var info = WME_Assist.info;
