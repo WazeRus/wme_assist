@@ -6,7 +6,7 @@
 // @require      https://greasyfork.org/scripts/31774-wme-assist-analyzer/code/WME_Assist_Analyzer.js?version=208269
 // @grant        none
 // @include      /^https:\/\/(www|beta)\.waze\.com(\/\w{2,3}|\/\w{2,3}-\w{2,3}|\/\w{2,3}-\w{2,3}-\w{2,3})?\/editor\b/
-// @version      0.5.27
+// @version      0.5.28
 // ==/UserScript==
 
 var WME_Assist = WME_Assist || {}
@@ -41,7 +41,7 @@ WME_Assist.series = function (array, start, action, alldone) {
 }
 
 function run_wme_assist() {
-    var ver = '0.5.27';
+    var ver = '0.5.28';
 
     var debug = WME_Assist.debug;
     var info = WME_Assist.info;
